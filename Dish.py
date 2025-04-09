@@ -3,11 +3,12 @@
 
 class Dish:
     # constructor
+    # Dish status must be 'Pending' or 'Served'.
     def __init__(self, name, quantity, price):
         self.name = name
         self.quantity = quantity
         self.price = price
-        self.status = "Pending" # מצב המנה: Pending או Served
+        self.status = "Pending" # in the beginning.
 
     @property
     def name(self):

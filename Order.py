@@ -7,6 +7,7 @@ class Order:
 
     # constructor- start with empty list of dishes, id will change later,
     # Default status is 'Served' (no pending dishes).
+    # Order status must be 'Pending', 'Served', or 'Done'.
     def __init__(self, customer_name, table_number):
         self.id = 1
         self.customer_name = customer_name
