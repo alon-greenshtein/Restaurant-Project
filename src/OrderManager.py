@@ -15,14 +15,44 @@ class OrderManager:
     @property
     def created_orders_num(self):
         return self.__created_orders_num
+
+    @created_orders_num.setter
+    def created_orders_num(self, value):
+        if value is None:
+           raise ValueError("created_orders_num cannot be None")
+        if not isinstance(value, int):
+           raise TypeError("created_orders_num must be an int")
+        if value < 0:
+           raise ValueError("created_orders_num cannot be negative")
+        self.__created_orders_num = value
       
     @property
     def stored_orders_num(self):
         return self.__stored_orders_num
 
+    @stored_orders_num.setter
+    def stored_orders_num(self, value):
+        if value is None:
+           raise ValueError("stored_orders_num cannot be None")
+        if not isinstance(value, int):
+           raise TypeError("stored_orders_num must be an int")
+        if value < 0:
+           raise ValueError("stored_orders_num cannot be negative")
+        self.__stored_orders_num = value
+
     @property
     def active_orders_num(self):
         return self.__active_orders_num
+
+    @active_orders_num.setter
+    def active_orders_num(self, value):
+        if value is None:
+           raise ValueError("active_orders_num cannot be None")
+        if not isinstance(value, int):
+           raise TypeError("active_orders_num must be an int")
+        if value < 0:
+           raise ValueError("active_orders_num cannot be negative")
+        self.__active_orders_num = value
 
     @property
     def orders(self):
@@ -30,32 +60,32 @@ class OrderManager:
     
     # Returns the total price of an order by table number.
     def get_order_price(self, table_number):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         return order.get_total_price()  
 
     # Returns the status of an order by table number.
     def get_order_status(self, table_number):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         return order.status
 
     # Returns customer name for a given table number.
     def get_customer_name(self, table_number):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         return order.customer_name
 
     # Updates the customer name for a given table number.
     def change_customer_name(self, table_number, name):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         order.customer_name = name
         
-    # Returns the price of a dish in a specific order.
-    def get_dish_price(self, table_number, dish_name):
-        order = self.find_order("table",table_number)
-        return order.get_dish_price(dish_name)
+    # Returns the unit price of a dish in a specific order.
+    def get_dish_unit_price(self, table_number, dish_name):
+        order = self.find_order("table_number",table_number)
+        return order.get_dish_unit_price(dish_name)
 
     # Returns the status of a dish in a specific order.
     def get_dish_status(self, table_number, dish_name):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         return order.get_dish_status(dish_name)
     
     # Validates the identifier type and value before searching for an order.
@@ -65,25 +95,31 @@ class OrderManager:
         if not isinstance(identi_type, str):
            raise TypeError("identifier type must be a string")
         identi_type = identi_type.lower().strip()   
-        if identi_type not in {"table", "id", "customer"}:
-           raise ValueError("identifier type must be 'table' or 'id' or 'customer'.")
+        if identi_type not in {"table_number", "id", "customer_name"}:
+           raise ValueError("identifier type must be 'table_number' or 'id' or 'customer_name'.")
        
-        if identi_type == "customer":
+        if identi_type == "customer_name":
            if not isinstance(identi_value, str):
               raise TypeError("identifier value must be a string")
            identi_value = identi_value.strip()  
            if not identi_value:   
-              raise ValueError("identifier value cannot be empty")   
-        identi_value = int(identi_value)  
-        if identi_value <= 0:
-           raise ValueError("identifier value must be positive")
+              raise ValueError("identifier value cannot be empty")
+        else:   
+           identi_value = int(identi_value)  
+           if identi_value <= 0:
+              raise ValueError("identifier value must be positive")
              
     # Finds and returns an order based on the given identifier.
     def find_order(self, identifier_type, identifier_value):
         self.check_valid_identifier(identifier_type, identifier_value) 
+        identifier_type = identifier_type.lower().strip()
+
+        if identifier_type != "customer_name":
+           identifier_value = int(identifier_value) 
+        
         for order in self.orders:  
             if getattr(order, identifier_type) == identifier_value:
-                if identifier_type != "table":
+                if identifier_type != "table_number":
                    return order
                 if order.status != "Done":
                    return order
@@ -100,38 +136,39 @@ class OrderManager:
     # Removes an order from the system based on an identifier (table, ID, or customer) and updating counters.
     def remove_order(self, identifier_type, identifier_value):
         order = self.find_order(identifier_type, identifier_value)
-        self.orders.remove(order)
         self.stored_orders_num -= 1
-        self.active_orders_num -= 1
+        if order.status != "Done":
+            self.active_orders_num -= 1
+        self.orders.remove(order)
 
     # Marks an order as 'Done', update active orders counter
     # and return the total price of the order.  
     def close_order(self, table_number):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         order.status = "Done"      
         self.active_orders_num -= 1
         return order.get_total_price()
 
     # Adds a dish to an existing order.
     def add_dish_to_order(self, table_number, dish: Dish):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         order.add_dish(dish)
 
     # Removes a dish from an order. if the order became empty- order deleted.
     def remove_dish_from_order(self, table_number, dish_name):
-        order = self.find_order("table", table_number)
+        order = self.find_order("table_number", table_number)
         order.remove_dish(dish_name)
         if not order.dishes:
-           self.remove_order("table", table_number) 
+           self.remove_order("table_number", table_number) 
 
     # Updates the quantity of a specific dish in an order.
     def update_dish_quantity(self, table_number, dish_name, new_quantity):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         order.update_dish_quantity(dish_name, new_quantity)
 
     # Updates the status of a dish within an order.   
     def update_dish_status(self, table_number, dish_name, status):
-        order = self.find_order("table",table_number)
+        order = self.find_order("table_number",table_number)
         order.update_dish_status(dish_name, status)
 
     # Validates the order status before processing.
@@ -140,27 +177,27 @@ class OrderManager:
            raise ValueError("status cannot be None")
         if not isinstance(status, str):
            raise TypeError("status must be a string")
-        if status not in {"Pending", "Served", "Done", "all"}:
+        if status not in {"Pending", "Served", "Done", "All"}:
            raise ValueError("status is not valid")
 
     # Returns a list of table numbers with orders matching a given status.
     def get_table_numbers_by_order_status(self,status):
         self.check_valid_status(status)
-        if status == "all":
-           raise ValueError("status cannot be 'all'")
+        if status == "All":
+           raise ValueError("status cannot be 'All'")
         return [order.table_number for order in self.orders if order.status == status]
 
     # Calculates the total price of all orders matching a given status.
-    # If status is 'all', returns the total price of all orders.
+    # If status is 'All', returns the total price of all orders.
     def total_orders_price_by_status(self, status):
         self.check_valid_status(status)
-        if status == "all":
+        if status == "All":
            return sum(order.get_total_price() for order in self.orders)
         return sum(order.get_total_price() for order in self.orders if order.status == status)    
 
     # Retrieves all dishes in an order that match a given status.
     def get_table_dishes_by_status(self, table_number, status):
-        order = self.find_order("table",table_number) 
+        order = self.find_order("table_number",table_number) 
         return order.get_dishes_by_status(status)
 
     # Returns a list of all dishes across all orders that match a given status.

@@ -12,7 +12,7 @@ class Order:
         self.id = 1
         self.customer_name = customer_name
         self.table_number = table_number
-        self.dishes = []  
+        self.__dishes = []  
         self.status = "Served"
 
     @property
@@ -48,7 +48,7 @@ class Order:
     @property
     def dishes(self):
         return self.__dishes
-
+    
     @property
     def status(self):
         return self.__status
@@ -88,10 +88,10 @@ class Order:
                return dish
         raise LookupError (f"{dish_name} is not found in that order")
 
-    # Returns dish price by the name of the dish.
-    def get_dish_price(self, dish_name):
+    # Returns dish unit price by the name of the dish.
+    def get_dish_unit_price(self, dish_name):
         dish = self.find_dish_by_name(dish_name)
-        return dish.price  
+        return dish.unit_price  
 
     # Returns dish status by the name of the dish.
     def get_dish_status(self, dish_name):
@@ -154,12 +154,12 @@ class Order:
         if not isinstance(status, str):
            raise TypeError("status must be a string")
     
-    # Returns a list of dishes filtered by status ('Pending', 'Served', or 'all').
+    # Returns a list of dishes filtered by status ('Pending', 'Served', or 'All').
     def get_dishes_by_status(self, status):
         self.check_valid_status(status)
-        if status not in {"Pending", "Served", "all"}:
-           raise ValueError("status must be 'Pending' or 'Served' or 'all'")
-        if status == "all":
+        if status not in {"Pending", "Served", "All"}:
+           raise ValueError("status must be 'Pending' or 'Served' or 'All'")
+        if status == "All":
            return self.dishes[:]
         return [dish for dish in self.dishes if dish.status == status]
 

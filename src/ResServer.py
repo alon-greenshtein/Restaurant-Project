@@ -65,12 +65,12 @@ class ResServer:
             except Exception as e:
                 return self.handle_exception(e) 
 
-        # Returns the price of a specific dish in the order at a given table.
-        @self.app.route('/orders/<int:table_number>/dishes/<string:dish_name>/price', methods=['GET'])
-        def get_dish_price(table_number, dish_name):
+        # Returns the unit price of a specific dish in the order at a given table.
+        @self.app.route('/orders/<int:table_number>/dishes/<string:dish_name>/unit_price', methods=['GET'])
+        def get_dish_unit_price(table_number, dish_name):
             try:
-                dish_price = self.order_manager.get_dish_price(table_number, dish_name)
-                return jsonify({"table_number": table_number, "dish_name": dish_name, "price": dish_price}), 200
+                dish_unit_price = self.order_manager.get_dish_unit_price(table_number, dish_name)
+                return jsonify({"table_number": table_number, "dish_name": dish_name, "unit_price": dish_unit_price}), 200
             except Exception as e:
                 return self.handle_exception(e)
 
@@ -142,9 +142,9 @@ class ResServer:
 
             # Add dish to order.
             quantity = data.get("quantity")
-            price = data.get("price")
+            unit_price = data.get("unit_price")
             try:
-                dish = Dish(name, quantity, price)
+                dish = Dish(name, quantity, unit_price)
                 self.order_manager.add_dish_to_order(table_number, dish)
                 return jsonify({"message": "Dish successfully added"}), 200
             except Exception as e:
@@ -182,7 +182,7 @@ class ResServer:
         def get_table_dishes_by_status(table_number, status):
             try:
                 dishes = self.order_manager.get_table_dishes_by_status(table_number, status)
-                return jsonify({f"{status.lower()}_dishes": [dish.to_dict() for dish in dishes]}), 200
+                return jsonify({f"{status.lower()} dishes": [dish.to_dict() for dish in dishes]}), 200
             except Exception as e:
                 return self.handle_exception(e)
 

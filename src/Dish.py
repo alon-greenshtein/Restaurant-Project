@@ -1,13 +1,13 @@
 ## Dish.py
-## Represents a dish in an order, including its name, quantity, price, and status.
+## Represents a dish in an order, including its name, quantity, unit_price, and status.
 
 class Dish:
     # constructor
     # Dish status must be 'Pending' or 'Served'.
-    def __init__(self, name, quantity, price):
+    def __init__(self, name, quantity, unit_price):
         self.name = name
         self.quantity = quantity
-        self.price = price
+        self.unit_price = unit_price
         self.status = "Pending" # in the beginning.
 
     @property
@@ -42,19 +42,19 @@ class Dish:
         self.__quantity = quantity
 
     @property
-    def price(self):
-        return self.__price
+    def unit_price(self):
+        return self.__unit_price
 
-    # check if price is number type, not unpositive and not None
-    @price.setter
-    def price(self, price):
-        if price is None:
-           raise ValueError("price cannot be None")
-        if not isinstance(price, (int, float)):
-           raise TypeError("price must be a number")
-        if price <= 0:
-           raise ValueError("price must be positive")
-        self.__price = float(price)
+    # check if unit_price is number type, not unpositive and not None
+    @unit_price.setter
+    def unit_price(self, unit_price):
+        if unit_price is None:
+           raise ValueError("unit price cannot be None")
+        if not isinstance(unit_price, (int, float)):
+           raise TypeError("unit price must be a number")
+        if unit_price <= 0:
+           raise ValueError("unit price must be positive")
+        self.__unit_price = float(unit_price)
   
     @property
     def status(self):
@@ -73,12 +73,13 @@ class Dish:
 
     # total price of dish
     def get_total_price(self):
-        return self.quantity * self.price
+        return self.quantity * self.unit_price
       
     def to_dict(self):
         return {
             "name": self.name,
+            "unit price": self.unit_price,
             "quantity": self.quantity,
-            "price": self.get_total_price(),
-            "status": self.status
+            "status": self.status,
+            "total price": self.get_total_price()
         }
