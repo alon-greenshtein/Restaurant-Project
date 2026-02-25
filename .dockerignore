@@ -8,6 +8,10 @@ __pycache__/
 venv/
 .venv/
 
+# Git
+.git/
+.gitignore
+
 # VS Code
 .vscode/
 
@@ -15,6 +19,6 @@ venv/
 .idea/
 *.iml
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
