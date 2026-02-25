@@ -1,0 +1,10 @@
+services:
+  web:
+    container_name: restaurant-web
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./src:/app
+    environment:
+      - FLASK_DEBUG=1
