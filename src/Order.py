@@ -2,7 +2,7 @@
 ## Represents a restaurant order associated with a specific table.
 ## Manages dishes, customer details, and order status.
 
-from Dish import Dish
+from .Dish import Dish
 class Order:
 
     # constructor- start with empty list of dishes, id will change later,

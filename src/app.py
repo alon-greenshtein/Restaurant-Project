@@ -1,8 +1,8 @@
 ## app.py
 from flask import Flask, request, jsonify
-from OrderManager import OrderManager
-from Order import Order
-from Dish import Dish
+from .OrderManager import OrderManager
+from .Order import Order
+from .Dish import Dish
 
 # Mapping error types to appropriate HTTP status codes.
 ERROR_HTTP_CODES = {

@@ -1,8 +1,8 @@
 ## OrderManager.py
 ## Manages restaurant orders, including creation, retrieval, and updates.
 
-from Order import Order
-from Dish import Dish
+from .Order import Order
+from .Dish import Dish
 
 class OrderManager: 
     # constructor, Initializes empty list of orders and counters.     
